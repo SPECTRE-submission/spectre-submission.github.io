@@ -118,3 +118,12 @@ body {
 .env-columns p {
   font-size: 0.95rem;
 }
+
+.publication-links {
+  margin-top: 1rem;
+}
+
+.publication-links .icon svg {
+  width: 1.1em;
+  height: 1.1em;
+}
