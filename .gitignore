@@ -1,0 +1,12 @@
+# Local-only guidance and tooling state; never publish
+CLAUDE.md
+.claude/
+
+# Raw source material (paper, figure PDFs, uncompressed video); derived web assets live under static/
+assets/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*~

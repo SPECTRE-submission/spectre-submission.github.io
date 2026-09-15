@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SPECTRE: Skeleton Priority Estimation Conditioned on TAMP Refinement Evidence</title>
+  <meta name="description" content="Refining abstract plans into executable robot motions is a computational bottleneck in task and motion planning (TAMP). Learned plan rankers aim to reduce failed refinement attempts by predicting which plans will succeed. However, using only the initial scene or refinement success statistics leaves out information computed during failed attempts, such as which objects obstructed an action. We present SPECTRE, a learned plan ranker that uses this evidence to re-rank the remaining candidates after each failed refinement.">
+  <meta name="keywords" content="task and motion planning, TAMP, plan ranking, refinement feedback, failure records, robot manipulation">
+  <meta property="og:title" content="SPECTRE: Skeleton Priority Estimation Conditioned on TAMP Refinement Evidence" />
+  <meta property="og:description" content="We present SPECTRE, a learned plan ranker that uses evidence computed during failed refinement attempts to re-rank the remaining candidates after each failed refinement." />
+  <meta property="og:url" content="https://anonymoussubmission184.github.io/SPECTRE/" />
+  <meta property="og:image" content="https://anonymoussubmission184.github.io/SPECTRE/static/images/fig_teaser.png" />
+  <meta property="og:image:width" content="2100" />
+  <meta property="og:image:height" content="810" />
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SPECTRE: Skeleton Priority Estimation Conditioned on TAMP Refinement Evidence">
+  <meta name="twitter:description" content="We present SPECTRE, a learned plan ranker that uses evidence computed during failed refinement attempts to re-rank the remaining candidates after each failed refinement.">
+  <meta name="twitter:image" content="https://anonymoussubmission184.github.io/SPECTRE/static/images/fig_teaser.png">
+
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  <!-- Icons are only needed by the publication-links block in the hero; enable both together.
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  -->
+</head>
+
+<body>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">
+              SPECTRE: Skeleton Priority Estimation Conditioned on TAMP Refinement Evidence
+            </h1>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">Anonymous Authors</span>
+            </div>
+            <div class="is-size-5 publication-venue">
+              <span class="author-block">Under review at ICRA 2027</span>
+            </div>
+
+            <!-- Publication links. Enable together with the Font Awesome script in the head
+                 once an appendix or paper may be linked.
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <span class="link-block">
+                  <a href="static/pdfs/SPECTRE_appendix.pdf" target="_blank"
+                     class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                    <span>Appendix</span>
+                  </a>
+                </span>
+                <span class="link-block">
+                  <a href="" target="_blank"
+                     class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                    <span>Paper</span>
+                  </a>
+                </span>
+              </div>
+            </div>
+            -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End hero -->
+
+  <!-- Teaser figure and real-robot video -->
+  <section class="hero teaser">
+    <div class="container is-max-desktop">
+      <div class="hero-body">
+        <img class="figure-img" src="static/images/fig_teaser.png"
+             alt="Initial scene with the goal of restocking the shelf; candidate plans with their initial ranking; a failure observation where placement fails with a wrist collision; and the successful plan in which all picks and places succeed.">
+        <p class="figure-caption">
+          SPECTRE uses refinement feedback to guide plan selection in a restocking task. The robot must place tall and
+          short cans on a shelf (left). Refinement of the initially highest-ranked plan fails because the arm lacks
+          clearance to place a tall can on the top shelf (top right). SPECTRE uses this feedback to re-rank the
+          remaining candidates (center) and selects a feasible plan that places tall cans on the bottom shelf (bottom
+          right).
+        </p>
+      </div>
+
+      <div class="hero-body">
+        <h2 class="title is-3 has-text-centered">Real-World Validation</h2>
+        <video class="rollout-video" autoplay muted loop playsinline controls preload="metadata"
+               poster="static/images/robot_rollout_poster.jpg">
+          <source src="static/videos/robot_rollout.mp4" type="video/mp4">
+        </video>
+        <p class="figure-caption">
+          We demonstrate SPECTRE in a real-to-sim-to-real restocking task. The robot is a TidyBot++ mobile manipulator
+          with a seven-degree-of-freedom Kinova Gen3 arm and a Robotiq 2F-85 gripper. SPECTRE uses failure evidence
+          during simulated refinement to re-rank the candidates, and the robot executes the resulting plan. (Video
+          playback at 15× speed.)
+        </p>
+      </div>
+    </div>
+  </section>
+  <!-- End teaser -->
+
+  <!-- Abstract -->
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-2 has-text-centered">Abstract</h2>
+          <div class="content">
+            <p>
+              Refining abstract plans into executable robot motions is a computational bottleneck in task and motion
+              planning (TAMP). Learned plan rankers aim to reduce failed refinement attempts by predicting which plans
+              will succeed. However, using only the initial scene or refinement success statistics leaves out
+              information computed during failed attempts, such as which objects obstructed an action. We present
+              SPECTRE, a learned plan ranker that uses this evidence to re-rank the remaining candidates after each
+              failed refinement. The ranker learns how structured failure records and derived features should adjust
+              its initial predictions from the scene and goal. We use the same record fields and derived features
+              across all tested domains. We evaluate SPECTRE on three TAMP domains against a classical planner, two
+              learned methods, and a vision-language model planner. SPECTRE reduces mean wall-clock time to the first
+              feasible plan by 17–59% relative to the fastest baseline in each domain. It also requires fewer failed
+              refinement attempts on average than the learned baselines on harder problems excluded from training.
+              Ablations show that using failure feedback reduces the mean number of failed refinement attempts by
+              57–60% relative to the same ranker without feedback. Our results show that information computed during
+              refinement is useful for learning to guide task and motion planning.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End abstract -->
+
+  <!-- Approach -->
+  <section class="section hero">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-2 has-text-centered">Approach</h2>
+          <div class="content">
+            <p>
+              For each problem, we use top-<i>k</i> planning to generate a fixed pool of <i>K</i> goal-reaching
+              skeletons. SPECTRE initially scores these candidates from the scene and goal, with an empty failure
+              history. It passes the highest-scoring skeleton to the refiner. On success, the planner returns the
+              solution. After a failed attempt, the refiner returns failure records. SPECTRE stores the attempted
+              skeleton with these records in the history. SPECTRE re-scores the untried candidates using the scene,
+              goal, pool, and failure history and refines the highest-scoring one. It repeats this process until it
+              finds a solution, exhausts the pool, or reaches the computation budget.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-body">
+        <img class="figure-img" src="static/images/fig_architecture.png"
+             alt="SPECTRE architecture. Scene tokens and a candidate embedding feed a static channel with cross-attention and a static head, trained in stage 1 and then frozen. Failure-history record tokens and the compiled features coverage, waste, blame, and Jaccard feed an evidence channel with cross-attention and an adaptive head, trained in stage 2. The two scores are combined through a gate to rank plans; the refiner logs a record per rejected sample and appends it to the failure history.">
+        <p class="figure-caption">
+          SPECTRE architecture. A candidate’s score sums a static channel that accounts for the plan, scene, and goal
+          (trained on Stage 1, then frozen) and a failure-based evidence channel that reads the record tokens and
+          compiled scalars (Stage 2). After each failed refinement, the new evidence is appended, and the remaining
+          pool is re-scored.
+        </p>
+      </div>
+    </div>
+  </section>
+  <!-- End approach -->
+
+  <!-- Results -->
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-2 has-text-centered">Results</h2>
+          <div class="content">
+            <h3 class="title is-4 subsection-title">Environments</h3>
+            <p>
+              We evaluate the planners in three manipulation environments with different sources of refinement
+              failure.
+            </p>
+            <div class="columns env-columns">
+              <div class="column">
+                <h4 class="title is-6">StickButton2D (SB2D)</h4>
+                <p>
+                  A robot must press buttons in two regions, using a stick to reach one region. Refinement can fail
+                  because a press is out of reach or would trigger an unintended button. Problems contain 1, 2, 3,
+                  or 5 buttons.
+                </p>
+              </div>
+              <div class="column">
+                <h4 class="title is-6">Drawer Decluttering 2D (DD2D)</h4>
+                <p>
+                  The robot must retrieve a target from a cluttered drawer, staging blocking objects on a small tray
+                  when needed. Refinement can fail if blockers remain in the target’s grasp corridor or cannot be
+                  placed on the tray. Problems require staging 0 to 3 blockers.
+                </p>
+              </div>
+              <div class="column">
+                <h4 class="title is-6">Restock3D</h4>
+                <p>
+                  The robot must pack objects of varying widths and heights onto two shelf levels with different
+                  clearances. Refinement can fail if an object or its required grasp lacks clearance, or if too many
+                  objects are assigned to one level. Problems contain 6 to 9 objects.
+                </p>
+              </div>
+            </div>
+            <p>
+              We compare the planners on held-out problems at all difficulty levels. SPECTRE has the lowest mean
+              failed-refinement count and runtime in each environment.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-body">
+        <img class="figure-img figure-img-stacked" src="static/images/fig_false_positives.png"
+             alt="Failed refinements before first success on StickButton2D, DD2D, and Restock3D for Base, SPECTRE, PIGINet, LAZY, and VLMPlan, shown as strip plots with mean bars and confidence intervals.">
+        <img class="figure-img" src="static/images/fig_wall_clock.png"
+             alt="Wall-clock time to first success on StickButton2D, DD2D, and Restock3D for Base, SPECTRE, PIGINet, LAZY, and VLMPlan, with bars broken down into abstract plan generation, inference, and refinement time.">
+        <p class="figure-caption">
+          Failed refinements before first success (top) and wall-clock time to first success (bottom), per
+          environment, for Base, SPECTRE, PIGINet, LAZY, and VLMPlan. Wall-clock bars are broken down into abstract
+          plan generation, inference, and refinement time. The ratio above each bar is that method’s mean divided by
+          SPECTRE’s mean in the same panel.
+        </p>
+      </div>
+    </div>
+  </section>
+  <!-- End results -->
+
+  <!-- Appendix. Enable when the supplementary PDF is hosted under static/pdfs/.
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <h2 class="title is-2 has-text-centered">Appendix</h2>
+      <iframe src="static/pdfs/SPECTRE_appendix.pdf" width="100%" height="700"></iframe>
+    </div>
+  </section>
+  -->
+
+  <footer class="footer">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content">
+            <p>
+              This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template"
+                target="_blank">Academic Project Page Template</a> which was adopted from the <a
+                href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+              <br> This website is licensed under a <a rel="license"
+                href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+                Commons Attribution-ShareAlike 4.0 International License</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+</html>
